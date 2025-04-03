@@ -1,7 +1,7 @@
 import { FaPlus, FaReddit, FaUser } from "react-icons/fa"
 import { SignInButton, UserButton, useUser } from "@clerk/clerk-react"
-import { Authenticated, Unauthenticated } from "convex/react"
 import { Link, useNavigate } from "react-router-dom"
+import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/clerk-react";
 
 import "../styles/Navbar.css"
 import { useState } from "react"
@@ -12,25 +12,26 @@ const Navbar = () => {
     const [showDropdown, setShowDropdown] = useState(false)
     const { user } = useUser() //get current user
     const navigate = useNavigate()
-
+    console.log({user})
     return <nav className="navbar">
         <div className="navbar-content">
-            <Link to="/" className="logo-link">
+            <span className="site-name">Photo Sharing</span>
+            <Link to="/upload" className="logo-link">
                 <div className="logo-container">
-                    <FaReddit className="reddit-icon"></FaReddit>
-                    <span className="site-name">reddit</span>
+                    Upload Pic
+                    <FaPlus></FaPlus>
                 </div>
             </Link>
-            <div>SearchBar</div>
+            <div>Search Your Pics</div>
             <div className="nav-actions">
-                <Unauthenticated>
+                <SignedOut>
                     <SignInButton mode="modal">
                         <button className="sign-in-button">
                             Sign In
                         </button>
                     </SignInButton>
-                </Unauthenticated>
-                <Authenticated>
+                </SignedOut>
+                <SignedIn>
                     {/* <div className="dropdown-container">
                         <button className="icon-button" onClick={() => setShowDropdown(true)}>
                             <FaPlus></FaPlus>
@@ -41,7 +42,7 @@ const Navbar = () => {
                         <FaUser></FaUser>
                     </button>
                     <UserButton></UserButton>
-                </Authenticated>
+                </SignedIn>
             </div>
         </div>
     </nav>

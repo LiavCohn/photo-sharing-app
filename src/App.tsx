@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import RequireAuth from "./components/RequireAuth";
 import Home from "./pages/Home";
-import React from "react";
+import Upload from "./pages/Upload";
 
 function App() {
 
@@ -11,6 +11,7 @@ function App() {
         {/* Protect all routes under RequireAuth */}
         <Route path="/" element={<RequireAuth />}>
           <Route index element={<Home />} /> {/* Home page for authenticated users */}
+          <Route path="/upload" element={<Upload />} />
         </Route>
 
         {/* Catch-all: Redirect unknown routes to home */}
