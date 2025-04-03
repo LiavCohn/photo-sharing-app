@@ -15,7 +15,9 @@ const Navbar = () => {
     console.log({user})
     return <nav className="navbar">
         <div className="navbar-content">
-            <span className="site-name">Photo Sharing</span>
+            <Link to="/">
+                <span className="site-name">Photo Sharing</span>
+            </Link>
             <Link to="/upload" className="logo-link">
                 <div className="logo-container">
                     Upload Pic
