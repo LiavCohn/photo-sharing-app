@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as http from "../http.js";
 import type * as image from "../image.js";
+import type * as pictures from "../pictures.js";
 import type * as users from "../users.js";
 
 /**
@@ -28,6 +29,7 @@ import type * as users from "../users.js";
 declare const fullApi: ApiFromModules<{
   http: typeof http;
   image: typeof image;
+  pictures: typeof pictures;
   users: typeof users;
 }>;
 export declare const api: FilterApi<

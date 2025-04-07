@@ -4,7 +4,7 @@ import React from "react";
 
 const  Home = () =>{
   const { user } = useUser();
-
+  console.log({ user });
   return (
     <div>This is the home page!</div>
   );
