@@ -1,7 +1,7 @@
-import { mutation } from "./_generated/server";
+import { mutation ,query} from "./_generated/server";
 import { getCurrentUserOrThrow } from "./users";
 
-export const getAlbumsByUser = mutation({
+export const getAlbumsByUser = query({
     args: {},
     handler: async (ctx) => {
         const {_id} = await getCurrentUserOrThrow(ctx);

@@ -1,13 +1,43 @@
 // pages/Upload.tsx
-import { useState } from "react";
-import { useMutation } from "convex/react";
+import { useState, useEffect } from "react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useUser } from "@clerk/clerk-react";
+import type { Id } from "../../convex/_generated/dataModel";
+import { v } from "convex/values";
+import { FaImage } from "react-icons/fa"
+import { IoMdClose } from "react-icons/io"
+import { useNavigate } from "react-router-dom"
+
+import "../styles/Upload.css";
+
+    // name: v.string(),
+    // caption: v.optional(v.string()),
+    // image: v.id("_storage"),
+    // public: v.boolean(),
+    // albumId: v.optional(v.id("albums")), 
+
+
+interface PictureProps {
+  name: string;
+  caption?: string;
+  image: Id<"_storage">;
+  public: boolean;
+  albumId?: Id<"albums">
+
+}
+
 
 const Upload = () => {
-  const [file, setFile] = useState<File | null>(null);
+  const [image, setSelectedImage] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [caption, setCaption] = useState("");
+  const [isPublic, setIsPublic] = useState(false);
+  const [albumId, setAlbumId] = useState<Id<"albums"> | undefined>(undefined);
+  const [submitting, setSubmitting] = useState(false)
+  const albums = useQuery(api.albums.getAlbumsByUser); // ← you'll need this query
+  const navigate = useNavigate();
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   const generateUploadUrl = useMutation(api.image.generateUploadUrl);
   const savePicture = useMutation(api.pictures.savePicture);
@@ -15,43 +45,150 @@ const Upload = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file || !user) return;
+    if (!image || !user) return;
 
-    // 1. Get an upload URL
     const postUrl = await generateUploadUrl();
-
-    // 2. Upload file to that URL
     const res = await fetch(postUrl, {
       method: "POST",
       body: (() => {
         const data = new FormData();
-        data.append("file", file);
+        data.append("file", image);
         return data;
       })(),
     });
 
-    const { storageId } = await res.json(); // Convex file ID
+    const { storageId } = await res.json();
 
-    // 3. Save metadata to DB
     await savePicture({
       name,
       caption,
       image: storageId,
-      public: false,
+      public: isPublic,
+      albumId: albumId,
     });
 
     alert("Picture uploaded!");
+    setSelectedImage(null);
+    setName("");
+    setCaption("");
+    setIsPublic(false);
+    setAlbumId(undefined);
   };
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <h2>Upload a Picture</h2>
-      <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} />
-      <input type="text" placeholder="Caption" value={caption} onChange={e => setCaption(e.target.value)} />
-      <input type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] ?? null)} />
-      <button type="submit">Upload</button>
-    </form>
-  );
+  // return (
+  //   <form className="upload-form" onSubmit={handleSubmit}>
+  //     <h2>Upload a Picture</h2>
+  //     <input
+  //       type="text"
+  //       placeholder="Name"
+  //       value={name}
+  //       required
+  //       onChange={e => setName(e.target.value)}
+  //     />
+  //     <input
+  //       type="text"
+  //       placeholder="Caption"
+  //       value={caption}
+  //       onChange={e => setCaption(e.target.value)}
+  //     />
+  //     <label>
+  //       <input
+  //         type="checkbox"
+  //         checked={isPublic}
+  //         onChange={e => setIsPublic(e.target.checked)}
+  //       />
+  //       Public
+  //     </label>
+
+  //     {albums && albums.length > 0 && (
+  //       <select
+  //         value={albumId ?? ""}
+  //         onChange={e => setAlbumId(e.target.value ? (e.target.value as Id<"albums">) : undefined)}
+  //       >
+  //         <option value="">Select an album (optional)</option>
+  //         {albums.map(album => (
+  //           <option key={album._id} value={album._id}>
+  //             {album.title}
+  //           </option>
+  //         ))}
+  //       </select>
+  //     )}
+
+  //     <input
+  //       type="file"
+  //       accept="image/*"
+  //       onChange={e => setFile(e.target.files?.[0] ?? null)}
+  //       required
+  //     />
+  //     <button type="submit">Upload</button>
+  //   </form>
+  // );
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+            alert("Image size should be less than 5MB")
+            return
+        }
+        setSelectedImage(file)
+        const reader = new FileReader()
+        reader.onloadend = () => {
+            setImagePreview(reader.result as string)
+        }
+        reader.readAsDataURL(file)
+    }
+}
+const handleRemoveImage = () => {
+  setSelectedImage(null)
+  setImagePreview(null)
+}
+  return <div className="content-container">
+  <div className="submit-container">
+      <h1>Upload a Picture</h1>
+      <form className="submit-form" onSubmit={handleSubmit}>
+          <input type='text' placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} className="submit-title" maxLength={50} />
+          <textarea placeholder="Text (Optional)" value={caption} onChange={(e) => setCaption(e.target.value)} className="submit-body" />
+          <div className="media-input-container">
+              <label className="image-upload-label">
+                  <FaImage className="image-icon"/>
+                  Upload Image
+                  <input type="file" accept="image/*" onChange={handleImageSelect} style={{display:"none"}}></input>
+              </label>
+              {imagePreview && <div className="image-preview-container">
+                  <img src={imagePreview} alt="Preview" className="image-preview"></img>
+                  <button type="button" className="remove-image-button" onClick={handleRemoveImage}><IoMdClose/></button>
+              </div>}
+        </div>
+          <label>
+        <input
+          type="checkbox"
+           checked={isPublic}
+           onChange={e => setIsPublic(e.target.checked)}
+        />
+        Public
+     </label>
+      {albums && albums.length > 0 && (
+        <select
+          value={albumId ?? ""}
+          onChange={e => setAlbumId(e.target.value ? (e.target.value as Id<"albums">) : undefined)}
+        >
+          <option value="">Select an album (optional)</option>
+          {albums.map(album => (
+            <option key={album._id} value={album._id}>
+              {album.title}
+            </option>
+          ))}
+        </select>
+      )}
+          <div className="submit-actions">
+              <button type="button" onClick={() => navigate(-1)} className="back-button" disabled={submitting}>Cancel</button>
+              <button type="submit" className="submit-button" disabled={submitting || !name.trim()}>{ submitting ? "Uploading..." : "Upload"}</button>
+
+          </div>
+      </form>
+  </div>
+</div>
 };
 
 export default Upload;
