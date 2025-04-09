@@ -1,5 +1,5 @@
 // pictures.ts
-import { mutation } from "./_generated/server";
+import { mutation,query } from "./_generated/server";
 import { v } from "convex/values";
 import { getCurrentUserOrThrow } from "./users";
 
@@ -21,3 +21,11 @@ export const savePicture = mutation({
     });
   },
 });
+
+export const getUserPicture = query({
+  args: {},
+  handler: async (ctx) => {
+    const {_id} = await getCurrentUserOrThrow(ctx);
+    return await ctx.db.query("pictures").filter(q => q.eq(q.field("userId"), _id)).collect();
+  }
+})
