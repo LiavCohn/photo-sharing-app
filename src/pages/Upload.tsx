@@ -47,90 +47,50 @@ const Upload = () => {
     e.preventDefault();
     if (!image || !user) return;
 
-    const postUrl = await generateUploadUrl();
-    const res = await fetch(postUrl, {
-      method: "POST",
-      body: (() => {
-        const data = new FormData();
-        data.append("file", image);
-        return data;
-      })(),
-    });
-
-    const { storageId } = await res.json();
-
-    await savePicture({
-      name,
-      caption,
-      image: storageId,
-      public: isPublic,
-      albumId: albumId,
-    });
-
-    alert("Picture uploaded!");
-    setSelectedImage(null);
-    setName("");
-    setCaption("");
-    setIsPublic(false);
-    setAlbumId(undefined);
+    try {
+      setSubmitting(true)
+      const postUrl = await generateUploadUrl();
+      const res = await fetch(postUrl, {
+        method: "POST",
+        body: (() => {
+          const data = new FormData();
+          data.append("file", image);
+          return data;
+        })(),
+      });
+  
+      const { storageId } = await res.json();
+  
+      await savePicture({
+        name,
+        caption,
+        image: storageId,
+        public: isPublic,
+        albumId: albumId,
+      });
+  
+      alert("Picture uploaded!");
+      navigate("/home")
+      
+    } catch (error) {
+      console.log({error})
+      alert("Failed to upload picture. Please try again")
+    }
+    finally {
+      setSubmitting(false)
+    }
   };
 
-  // return (
-  //   <form className="upload-form" onSubmit={handleSubmit}>
-  //     <h2>Upload a Picture</h2>
-  //     <input
-  //       type="text"
-  //       placeholder="Name"
-  //       value={name}
-  //       required
-  //       onChange={e => setName(e.target.value)}
-  //     />
-  //     <input
-  //       type="text"
-  //       placeholder="Caption"
-  //       value={caption}
-  //       onChange={e => setCaption(e.target.value)}
-  //     />
-  //     <label>
-  //       <input
-  //         type="checkbox"
-  //         checked={isPublic}
-  //         onChange={e => setIsPublic(e.target.checked)}
-  //       />
-  //       Public
-  //     </label>
-
-  //     {albums && albums.length > 0 && (
-  //       <select
-  //         value={albumId ?? ""}
-  //         onChange={e => setAlbumId(e.target.value ? (e.target.value as Id<"albums">) : undefined)}
-  //       >
-  //         <option value="">Select an album (optional)</option>
-  //         {albums.map(album => (
-  //           <option key={album._id} value={album._id}>
-  //             {album.title}
-  //           </option>
-  //         ))}
-  //       </select>
-  //     )}
-
-  //     <input
-  //       type="file"
-  //       accept="image/*"
-  //       onChange={e => setFile(e.target.files?.[0] ?? null)}
-  //       required
-  //     />
-  //     <button type="submit">Upload</button>
-  //   </form>
-  // );
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
+
     if (file) {
         if (file.size > 5 * 1024 * 1024) {
             alert("Image size should be less than 5MB")
             return
         }
+        
         setSelectedImage(file)
         const reader = new FileReader()
         reader.onloadend = () => {
@@ -139,7 +99,7 @@ const Upload = () => {
         reader.readAsDataURL(file)
     }
 }
-const handleRemoveImage = () => {
+  const handleRemoveImage = () => {
   setSelectedImage(null)
   setImagePreview(null)
 }
@@ -148,7 +108,7 @@ const handleRemoveImage = () => {
       <h1>Upload a Picture</h1>
       <form className="submit-form" onSubmit={handleSubmit}>
           <input type='text' placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} className="submit-title" maxLength={50} />
-          <textarea placeholder="Text (Optional)" value={caption} onChange={(e) => setCaption(e.target.value)} className="submit-body" />
+          <textarea placeholder="Captions (Optional)" value={caption} onChange={(e) => setCaption(e.target.value)} className="submit-body" />
           <div className="media-input-container">
               <label className="image-upload-label">
                   <FaImage className="image-icon"/>
