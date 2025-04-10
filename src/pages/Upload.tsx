@@ -11,12 +11,6 @@ import { useNavigate } from "react-router-dom"
 
 import "../styles/Upload.css";
 
-    // name: v.string(),
-    // caption: v.optional(v.string()),
-    // image: v.id("_storage"),
-    // public: v.boolean(),
-    // albumId: v.optional(v.id("albums")), 
-
 
 interface PictureProps {
   name: string;
@@ -48,23 +42,43 @@ const Upload = () => {
     if (!image || !user) return;
 
     try {
+
       setSubmitting(true)
-      const postUrl = await generateUploadUrl();
-      const res = await fetch(postUrl, {
-        method: "POST",
-        body: (() => {
-          const data = new FormData();
-          data.append("file", image);
-          return data;
-        })(),
-      });
+      let imageUrl = undefined
+      if (image) {
+        const uploadUrl = await generateUploadUrl()
+        const result = await fetch(uploadUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": image.type,
+          },
+          body: image
+        })
+        if (!result.ok) {
+          throw new Error("Failed to upload image.")
+        }
+        const { storageId } = await result.json()
+        imageUrl = storageId
+
+      }
+
+      // setSubmitting(true)
+      // const postUrl = await generateUploadUrl();
+      // const res = await fetch(postUrl, {
+      //   method: "POST",
+      //   body: (() => {
+      //     const data = new FormData();
+      //     data.append("file", image);
+      //     return data;
+      //   })(),
+      // });
   
-      const { storageId } = await res.json();
+      // const { storageId } = await res.json();
   
       await savePicture({
         name,
         caption,
-        image: storageId,
+        image: imageUrl,
         public: isPublic,
         albumId: albumId,
       });

@@ -17,6 +17,7 @@ export default defineSchema({
     image: v.id("_storage"), // Convex file reference
     albumId: v.optional(v.id("albums")), // Optional album
     createdAt: v.number(), // Unix timestamp or Date.now()
+    username: v.string(),
   }).index("byUserId", ["userId"]),
 
   albums: defineTable({

@@ -1,7 +1,7 @@
 import { query} from "./_generated/server";
 import { getCurrentUserOrThrow } from "./users";
 
-export const getAlbumsByUser = query({
+export const getSharedContent = query({
     args: {},
     handler: async (ctx) => {
         const {_id} = await getCurrentUserOrThrow(ctx);
