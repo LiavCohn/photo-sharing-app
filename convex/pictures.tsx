@@ -16,6 +16,7 @@ export const savePicture = mutation({
     return await ctx.db.insert("pictures", {
       ...args,
       userId: _id,
+      externalId:externalId,
       username: username,
       createdAt: Date.now(),
     });

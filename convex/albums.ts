@@ -18,12 +18,13 @@ export const createAlbum = mutation({
         public: v.boolean(),
     },
     handler: async (ctx, args) => {
-        const {_id} = await getCurrentUserOrThrow(ctx);
+        const {_id,externalId} = await getCurrentUserOrThrow(ctx);
   
       const albumId = await ctx.db.insert("albums", {
         title: args.title,
         description: args.description,
         userId: _id, 
+        externalId:externalId,
         public: args.public,
         createdAt: Date.now(),
       });

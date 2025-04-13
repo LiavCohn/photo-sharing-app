@@ -18,6 +18,7 @@ export default defineSchema({
     albumId: v.optional(v.id("albums")), // Optional album
     createdAt: v.number(), // Unix timestamp or Date.now()
     username: v.string(),
+    externalId: v.string(),
   }).index("byUserId", ["userId"]),
 
   albums: defineTable({
@@ -26,6 +27,7 @@ export default defineSchema({
     userId: v.id("users"),
     public: v.boolean(),
     createdAt: v.number(),
+    externalId:v.string(),
   }).index("byUserId", ["userId"]),
 
   sharedContent: defineTable({
