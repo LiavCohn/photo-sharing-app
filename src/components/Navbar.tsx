@@ -2,7 +2,7 @@ import { FaPlus, FaReddit, FaUser } from "react-icons/fa"
 import { SignInButton, UserButton, useUser } from "@clerk/clerk-react"
 import { Link, useNavigate } from "react-router-dom"
 import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/clerk-react";
-
+import Dropdown from "./Dropdown";
 import "../styles/Navbar.css"
 import { useState } from "react"
 
@@ -12,7 +12,6 @@ const Navbar = () => {
     const [showDropdown, setShowDropdown] = useState(false)
     const { user } = useUser() //get current user
     const navigate = useNavigate()
-    console.log({user})
     return <nav className="navbar">
         <div className="navbar-content">
             <Link to="/">
@@ -38,7 +37,7 @@ const Navbar = () => {
                         <button className="icon-button" onClick={() => setShowDropdown(true)}>
                             <FaPlus></FaPlus>
                         </button>
-                        {showDropdown && <CreateDropdown isOpen={showDropdown} onClose={() => setShowDropdown(false)}/>}
+                        {showDropdown && <Dropdown isOpen={showDropdown} onClose={() => setShowDropdown(false)}/>}
                     </div> */}
                     <button className="icon-button" onClick={() => user?.username && navigate(`/u/${user.username}`)} title="View Profile">
                         <FaUser></FaUser>

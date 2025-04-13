@@ -4,19 +4,8 @@ import { api } from "../../convex/_generated/api";
 import "../styles/Home.css"
 import { Link } from "react-router-dom";
 import { Id } from "../../convex/_generated/dataModel";
+import Cards from "../components/Cards";
 
-
-interface Picture {
-  _id: string;
-  name: string;
-  caption?: string;
-  public: boolean; // Is it publicly visible?
-  userId: Id<"users">;
-  image: Id<"_storage">; // Convex file reference
-  albumId?: Id<"albums">; // Optional album
-  createdAt: number; // Unix timestamp or Date.now()
-  username: string;
-}
 
 
 const  Home = () =>{
@@ -39,19 +28,7 @@ const  Home = () =>{
           <p>No pictures yet. <Link to="/upload">Upload one</Link>.</p>
         ) : (
             <div className="card-container">
-              {pictures.map(pic => (
-              <div key={pic._id} className="card">
-                  {pic.url ? (
-                    <img src={pic.url} alt={pic.name} />
-                  ) : (
-                    <div className="image-placeholder">Image not available</div>
-                  )}
-                <div className="card-content">
-                  <h3>{pic.name}</h3>
-                  <p>{pic.caption}</p>
-                </div>
-              </div>
-              ))}
+              <Cards type={"picture"} items={pictures}/>
 
           </div>
         )}
@@ -63,14 +40,7 @@ const  Home = () =>{
           <p>No albums yet. <Link to="/create-album">Create one</Link>.</p>
         ) : (
           <div className="card-container">
-            {albums.map(album => (
-              <div key={album._id} className="card">
-                <div className="card-content">
-                  <h3>{album.title}</h3>
-                  <p>{album.description}</p>
-                </div>
-              </div>
-            ))}
+            <Cards type={"album"} items={albums} />
           </div>
         )}
       </section>

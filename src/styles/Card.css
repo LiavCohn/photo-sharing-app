@@ -1,0 +1,84 @@
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .card-picture {
+    width: 200px;
+    height: 250px;
+    background-color: rgb(243, 246, 250);
+    border-radius: 10px;
+    box-shadow: 0 1px 6px rgba(60, 64, 67, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    position: relative;
+    transition: box-shadow 0.2s ease;
+  }
+  
+  .card-album {
+    width: 200px;
+    height: auto;
+    background-color:  rgb(243, 246, 250);
+    border-radius: 10px;
+    box-shadow: 0 1px 6px rgba(60, 64, 67, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    position: relative;
+    transition: box-shadow 0.2s ease;
+  }
+  
+  .card:hover {
+    box-shadow: 0 4px 12px rgba(60, 64, 67, 0.3);
+  }
+  
+  .card img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .image-placeholder {
+    width: 100%;
+    height: 130px;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .card-content {
+    padding: 10px;
+  }
+  
+  .card-content h3 {
+    font-size: 14px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .card-content p {
+    font-size: 12px;
+    color: #666;
+    margin: 4px 0 0;
+  }
+  
+  /* Optional: Three-dot menu (placeholder for now) */
+  .card-menu {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 18px;
+    color: #888;
+    cursor: pointer;
+  }

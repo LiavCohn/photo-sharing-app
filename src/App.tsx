@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import RequireAuth from "./components/RequireAuth";
 import Home from "./pages/Home";
 import Upload from "./pages/Upload";
+import CreateAlbumForm from "./pages/CreateAlbum";
 
 function App() {
 
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<RequireAuth />}>
           <Route index element={<Home />} /> {/* Home page for authenticated users */}
           <Route path="/upload" element={<Upload />} />
+          <Route path="/create-album" element={<CreateAlbumForm/>}/>
         </Route>
 
         {/* Catch-all: Redirect unknown routes to home */}

@@ -12,7 +12,7 @@ export const savePicture = mutation({
     albumId: v.optional(v.id("albums")), // 👈 add this line
   },
   handler: async (ctx, args) => {
-    const {_id,username} = await getCurrentUserOrThrow(ctx);
+    const {_id,username,externalId} = await getCurrentUserOrThrow(ctx);
     return await ctx.db.insert("pictures", {
       ...args,
       userId: _id,
